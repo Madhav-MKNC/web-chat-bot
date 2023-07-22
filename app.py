@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 
 
-from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 
 import json
 import hashlib
 from functools import wraps
+
+from utils import *
+import chatbot
 
 import os
 from dotenv import load_dotenv
@@ -19,24 +22,7 @@ app = Flask(__name__)
 # secret key
 app.secret_key = os.getenv("FLASK_SECRET_KEY")  # Change this to a strong random key in a production environment
 
-# Load admin users from the JSON file
-USERS_FILE = 'users.json'
-
-def load_users():
-    users = []
-    if os.path.exists(USERS_FILE):
-        with open(USERS_FILE, 'r') as file:
-            users = json.load(file)
-    return users
-
-USERS = load_users()
-def is_authenticated(username, password):
-    # Check if the provided username and password match any admin user
-    for user in USERS:
-        if user['username'] == username and hashlib.sha256(user['password'].encode()).hexdigest() == hashlib.sha256(password.encode()).hexdigest():
-            return True
-    return False
-
+# for verifying if the user is logged in 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -48,10 +34,10 @@ def login_required(f):
 
 """
 Routes below:
-/           => chatbot login page
-/chat       => admin dashboard
-
-/logout     => user logout
+/                   => chatbot login page
+/chat               => chatbot page
+/get_chat_response  => get chatbot response
+/logout             => user logout
 """
 
 # index -> login
@@ -80,6 +66,19 @@ def chat():
 
     return render_template('chat.html')
 
+# get response from chatbot
+@app.route('/get_chat_response', methods=['POST'])
+@login_required
+def get_chat_response():
+    # Check if the user is authenticated in the session
+    if not session.get('authenticated'):
+        return redirect(url_for('login'))
+    
+    user_input = request.json['message']
+    response = chatbot.get_response(query=user_input)
+
+    return jsonify({'message': response})
+
 # logout
 @app.route('/logout')
 def logout():
@@ -87,10 +86,12 @@ def logout():
     session.pop('authenticated', None)
     return redirect(url_for('login'))
 
+
+
 # run server
-def start_server():
+def start_chat_server():
     app.run(host="0.0.0.0", port=8081, debug=True)
 
 
 if __name__ == '__main__':
-    start_server()
+    start_chat_server()
