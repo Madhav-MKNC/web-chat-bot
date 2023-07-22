@@ -43,6 +43,9 @@ Routes below:
 # index -> login
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    if session.get('authenticated'):
+        return redirect(url_for("chat"))
+    
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']

@@ -10,9 +10,9 @@ COMMAND = "python app.py"
 
 # run app.py
 def main():
-    from app import start_server
+    from app import start_chat_server
     print("[CHATBOT GOING ONLINE...]")
-    start_server()
+    start_chat_server()
 
 # install dependencies
 def install():
@@ -23,10 +23,10 @@ def install():
 if __name__ == "__main__":
     try:
         main()
-    except ModuleNotFoundError:
+    except ModuleNotFoundError as e:
+        print(e)
         install()
-    except ImportError:
-        install()
+        main()
     except KeyboardInterrupt:
         print("\n[exitted]")
 
