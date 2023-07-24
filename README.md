@@ -14,6 +14,8 @@ The Chat Bot Web Application is a web-based interactive chatbot that utilizes La
 
 To set up and run the Chat Bot Web Application, follow these steps:
 
+0. **Pinecone Vector database**: Note that you should have an already prepared index on Pinecone, or use the <a href="https://github.com/madhav-mknc/admin-portal">admin portal</a> application for creating an index and uploading data on there.
+
 1. **Clone the Repository**: Clone this repository to your local machine.
 
 2. **Install Dependencies**: Ensure you have Python and the required libraries installed. Use the following command to install the necessary dependencies:
