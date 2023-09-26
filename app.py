@@ -71,15 +71,22 @@ def chat():
 
 # get response from chatbot
 @app.route('/get_chat_response', methods=['POST'])
-@login_required
 def get_chat_response():
-    # Check if the user is authenticated in the session
-    if not session.get('authenticated'):
-        return redirect(url_for('login'))
-    
     user_input = request.json['message']
-    response = chatbot.get_response(query=user_input)
+    chat_history = request.json['conversationHistory']
 
+    # truncate the chat_history
+    chat_history.reverse()
+    conversation = []
+    for chat in chat_history:
+        if len(str(conversation)) > 2000: # 2000 characters is the currect limit
+            break 
+        conversation.append(chat)
+    chat_history = conversation[::-1]
+    # for i in chat_history:
+    #     print(i)
+
+    response = chatbot.get_response(query=user_input, chat_history=chat_history)
     return jsonify({'message': response})
 
 # logout
