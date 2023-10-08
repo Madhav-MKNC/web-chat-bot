@@ -1,12 +1,6 @@
 Flask
 Werkzeug
-beautifulsoup4
-google-api-python-client
-google-auth-httplib2
-google-auth-oauthlib
-google-auth
 pinecone-client[grpc]
-pinecone-datasets
 openai
 tiktoken
 unstructured
@@ -15,5 +9,4 @@ pymupdf
 pandas
 pathlib
 docx2txt
-tqdm
 python-dotenv
